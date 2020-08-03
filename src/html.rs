@@ -1,8 +1,9 @@
-//! HTML rendering
+//! Compose the HTML message body
 
 use crate::types::*;
 use horrorshow::helper::doctype;
 use horrorshow::{html, Raw};
+use std::collections::HashMap;
 
 /// # Render assets to HTML
 ///
@@ -17,7 +18,7 @@ use horrorshow::{html, Raw};
 pub fn build(
     config: &Config,
     assets: Vec<&Asset>,
-    thumbnail_urls: ThumbnailLocations,
+    thumbnail_urls: HashMap<Checksum, URL>,
 ) -> String {
     format!(
         "{}",

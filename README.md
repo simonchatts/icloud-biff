@@ -1,3 +1,6 @@
+![CI checks](https://github.com/simonchatts/icloud-biff/workflows/CI%20checks/badge.svg)
+![Nix build](https://github.com/simonchatts/icloud-biff/workflows/Nix%20nuild/badge.svg)
+
 # iCloud Biff
 
 Scan a public iCloud shared photo library, and send an email with the
@@ -6,7 +9,7 @@ was run.
 
 ## Usage
 
-Easiest is to use NixOS - just add `nix/modules.nix` to your `imports`, and
+Easiest is to use [NixOS](https://nixos.org) - just add `nix/modules.nix` to your `imports`, and
 then do something like:
 
 ```nix
@@ -33,7 +36,14 @@ By default this runs the daemon every hour, but this is configurable with the
 
 ## Non-NixOS
 
-If deploying manually, create a configuration JSON file like the above, but
+### Building
+
+If using [Nix](https://nixos.org), then `nix build`. Otherwise `cargo build
+--release`.
+
+### Deploying
+
+Create a configuration JSON file like the above, but
 without `enable = true;` and with the path to a read-write JSON file that can
 be used to store state. For example:
 
@@ -51,14 +61,17 @@ be used to store state. For example:
 }
 ```
 
-It's up to you to manage recurring invocation, userids etc.
+Then run `icloud-biff <path-to-json-file>` (as frequently as you want, with
+appropriate userid etc).
 
 ## Implementation
 
-See `PROTOCOL.md` for the reverse-engineering bit.
+This was originally written as an async app, with parallel thumbnail fetching.
+It turns out that including thumbnail images in the email is a bad idea though -
+most email clients not only don't display them, but actively categorise the
+message as definitely spam.
 
-Everything is pointlessly async. This is because I originally fetched all the
-image data in parallel, but this turns out to just be a great way to get
-categorised as spam, as well as not display well in Android email clients.  So
-this is actually a linear sequence of operations, each of which is `await`ed
-before the next. Yay.
+So now the email's HTML message body refers to the thumbnail images on the
+iCloud servers as remote requests, and there isn't anything the program can
+usefully do in parallel any more. So it's just synchronous. (The HTTP requests
+still use an async library, but blocking immediately.)

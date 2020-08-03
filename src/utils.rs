@@ -1,9 +1,9 @@
 //! Misc utils
 
-use async_std::fs;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::fmt::Display;
+use std::fs;
 
 //////////////////////////////////////////////////////////////////////////////
 ///
@@ -49,19 +49,19 @@ where
 // JSON load from/save to file
 
 /// Load a JSON file.
-pub async fn load_json<T>(fname: &str) -> Result<T, Box<dyn std::error::Error>>
+pub fn load_json<T>(fname: &str) -> Result<T, Box<dyn std::error::Error>>
 where
     T: DeserializeOwned,
 {
-    let raw_json = fs::read_to_string(fname).await?;
+    let raw_json = fs::read_to_string(fname)?;
     serde_json::from_str(&raw_json).map_err(|e| e.into())
 }
 
 /// Save a JSON file.
-pub async fn save_json<T>(this: &T, fname: &str) -> Result<(), Box<dyn std::error::Error>>
+pub fn save_json<T>(this: &T, fname: &str) -> Result<(), Box<dyn std::error::Error>>
 where
     T: Serialize,
 {
     let raw_json = serde_json::to_vec_pretty(this)?;
-    fs::write(fname, raw_json).await.map_err(|e| e.into())
+    fs::write(fname, raw_json).map_err(|e| e.into())
 }

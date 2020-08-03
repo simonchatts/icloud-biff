@@ -1,4 +1,4 @@
-//! Fetching data from iCloud
+//! Fetch data from iCloud
 
 use crate::types::*;
 use serde::{Deserialize, Serialize};
@@ -9,17 +9,20 @@ type AnyError = Box<dyn std::error::Error + Send + Sync + 'static>;
 
 ///////////////////////////////////////////////////////////////////////////////
 ///
-/// Fetch all the assets available from the iCloud photo album.
-pub async fn all_assets(album_id: &AlbumId) -> Result<Vec<Asset>, AnyError> {
+/// Synchronously fetch all the assets available from the iCloud photo album.
+pub fn all_assets(album_id: &AlbumId) -> Result<Vec<Asset>, AnyError> {
     let post_data = serde_json::json!({ "streamCtag": null });
-    let result = surf::post(album_id.all_assets())
-        .body_json(&post_data)?
-        .recv_json::<AllAssetResponse>()
-        .await?
-        .photos
-        .into_iter()
-        .map(process)
-        .collect();
+    // We use an async http client, but just block on it straight away...
+    let result = smol::block_on(
+        surf::post(album_id.all_assets())
+            .body_json(&post_data)?
+            .recv_json::<AllAssetResponse>(),
+    )?
+    // ...and then process the result.
+    .photos
+    .into_iter()
+    .map(process)
+    .collect();
     Ok(result)
 }
 
@@ -70,7 +73,7 @@ fn process(photo: RawAsset) -> Asset {
     };
 
     // Video thumbnails are disproportionately large vs photo ones.
-    let maybe_shrink = |x: u16| -> u16 {
+    let shrink = |x: u16| -> u16 {
         match photo.media_asset_type {
             AssetType::Photo => x / 2,
             AssetType::Video => x / 6,
@@ -82,26 +85,29 @@ fn process(photo: RawAsset) -> Asset {
         guid: photo.photo_guid.clone(),
         asset_type: photo.media_asset_type,
         checksum: thumbnail.checksum.clone(),
-        width: maybe_shrink(thumbnail.width.parse().expect("width")),
-        height: maybe_shrink(thumbnail.height.parse().expect("height")),
+        width: shrink(thumbnail.width.parse().expect("width")),
+        height: shrink(thumbnail.height.parse().expect("height")),
     }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 ///
-/// Fetch the thumbnail data for the specified Guids.
-pub async fn thumbnail_urls(
+/// Synchronously fetch the thumbnail data for the specified Guids.
+pub fn thumbnail_urls(
     photo_guids: &[&Guid],
     config: &Config,
-) -> Result<ThumbnailLocations, AnyError> {
-    let result: ThumbnailLocations = surf::post(config.album_id.asset_urls())
-        .body_json(&FetchThumbnailsRequest { photo_guids })?
-        .recv_json::<FetchThumbnailsResponse>()
-        .await?
-        .items
-        .into_iter()
-        .map(|(k, v)| (k, v.as_url()))
-        .collect();
+) -> Result<HashMap<Checksum, URL>, AnyError> {
+    // We use an async http client, but just block on it straight away...
+    let result = smol::block_on(
+        surf::post(config.album_id.asset_urls())
+            .body_json(&FetchThumbnailsRequest { photo_guids })?
+            .recv_json::<FetchThumbnailsResponse>(),
+    )?
+    // ...and then process the result.
+    .items
+    .into_iter()
+    .map(|(k, v)| (k, v.as_url()))
+    .collect();
     Ok(result)
 }
 

@@ -1,3 +1,5 @@
+//! Send email
+
 use crate::types::*;
 use lettre::sendmail::SendmailTransport;
 use lettre::Transport;

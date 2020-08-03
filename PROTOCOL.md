@@ -80,32 +80,13 @@ choose). There is actually a `locations` bit formally specifying how to turn the
     },
 ```
 
-but seemingly you can just stick them together with an https and cross your fingers. A
+but seemingly you can just stick them together with an `https` and cross your fingers. A
 GET request to this retrieves the requested image at the specified resolution.
 
 ---
 ## Step 4: link to the full-resolution image
 
-The full-size image is available at
+The full-size image (along with navigation chrome etc) is available at
 `https://www.icloud.com/sharedalbum/#<album-id>;<photo-guid>`
 
 eg `https://www.icloud.com/sharedalbum/#W8wTwfDXIRobq9z;3Z6SF2W8-9897-31UI-9672-S908Z0P4Y3D0`
-
----
-## Example from command-line
-
-```
-curl -d '{"streamCtag": null}' https://p37-sharedstreams.icloud.com/F7kWxcZNHZhwo2l/sharedstreams/webstream
-
-curl -d '{"photoGuids": ["1D9UP0K3-0312-63XZ-5756-W800I8W9C6F3"]}' https://p37-sharedstreams.icloud.com/N5qHvgMLMOmho0r/sharedstreams/webasseturls
-
-curl 'https://cvws.icloud-content.com/S/SZ4RHjB9mAcfIRrJYsiWZ3-cYkgV/RJH96846.jpg?
-      o=OzyZEImgOdxT4tL3l0WfAsQeM4Qtl7vBi-gMvzHIiw4I&v=1&z=https%3A%2F%2Fp37-conte
-      nt.icloud.com%3A443&x=1&a=CAogb3s_-oWyhDZ1oWfIYvYKY1zEBGDTaFOFjIKQI7wW12pWGi
-      Qzl-bgxh4FuR081zZcGjNWTcNvEysSjrufm3uBPZPehDKcMMSWq1lMoEiYiMzRjsBJQL9EWVGCQj
-      aL89sEDRVkQ_mmCTYeCDpkJnmCwxPehx6sIPECfBf0jFEr06jtRSBB-MqbjN2&e=6392807985&
-      r=8il4414e-yy11-6ses-5ny9-2664q9q2r697-8&s=VeaZ7j5ZcTt8UDfm1N9WIqRrXcU' \
-      --output test.jpg
-```
-
-Link to full size: https://www.icloud.com/sharedalbum/#I8sXgdWIVVgwy2u;0S6RV8T8-1817-69VU-8003-R727R5L3N0Y2

@@ -2,7 +2,6 @@
 use derivative::Derivative;
 use derive_more::Display;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 //////////////////////////////////////////////////////////////////////////////
 ///
@@ -99,7 +98,3 @@ pub enum AssetType {
     Photo,
     Video,
 }
-
-/// Map from an asset checksum to the URL containing the full data for the asset
-/// (at the resolution matching that checksum).
-pub type ThumbnailLocations = HashMap<Checksum, URL>;

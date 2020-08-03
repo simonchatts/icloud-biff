@@ -1,20 +1,10 @@
 [package]
 name = "icloud-biff"
-version = "0.1.0"
+version = "0.9.0"
 authors = ["Simon Chatterjee <code@chatts.net>"]
 edition = "2018"
 
-[[bin]]
-name = "icloud-biff"
-path = "src/main.rs"
-
 [dependencies]
-# standard stuff
-async-std = {version = "1", features = ["attributes"]}
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-
-# more niche
 derivative = "2.1"         # derive Default
 derive_more = "0.99"       # derive Display
 lettre = "0.9"             # send email
@@ -22,4 +12,7 @@ lettre_email = "0.9"       # construct email
 horrorshow = "0.8"         # render HTML
 mime = "0.3"               # MIME stuff
 quoted_printable = "0.4"   # quoted-printable encoding
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"         # JSON encoding/decoding
+smol = "0.3"               # Minimal async runtime
 surf = "1.0"               # HTTP client

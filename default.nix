@@ -17,8 +17,8 @@ rustPlatform.buildRustPackage rec {
   pname = "icloud-biff";
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ openssl ] ++ stdenv.lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.Security ];
-  version = "0.1.0";
+  version = "0.9.0";
   src = gitignoreSource ./.;
-  cargoSha256 = "0n6hkp3mi5prsadmlyx5wraklrfkq7rjh57zw3lnhabqg5fgkqgp";
+  cargoSha256 = "1z81xr6al7my3bmhd0dbfriszlpj47fxhn8069ka906n6gz1cd6w";
   verifyCargoDeps = true;
 }
