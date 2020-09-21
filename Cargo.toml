@@ -5,7 +5,7 @@ authors = ["Simon Chatterjee <code@chatts.net>"]
 edition = "2018"
 
 [dependencies]
-clap = "3.0.0-beta.1"      # process command line
+clap = "3.0.0-beta.2"      # process command line
 derivative = "2.1"         # derive Default
 derive_more = "0.99"       # derive Display
 lettre = "0.9"             # send email
