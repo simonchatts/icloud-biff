@@ -107,6 +107,7 @@ in
           users.icloud-biff = {
             description = "User to monitor iCloud photo library";
             group = "icloud-biff";
+            isSystemUser = true;
           };
           groups.icloud-biff= {};
         };
