@@ -10,14 +10,14 @@ mod html;
 mod types;
 mod utils;
 
-use clap::Clap;
+use clap::Parser;
 use std::collections::HashSet;
 use types::*;
 use utils::OrDie;
 
 /// Poll an iCloud Shared Photo library and email any updates
-#[derive(Clap, Debug)]
-#[clap(version = "1.0.0")]
+#[derive(Parser, Debug)]
+#[clap(version)]
 pub struct Opts {
     /// Mandatory JSON configuration file
     #[clap(short, long)]

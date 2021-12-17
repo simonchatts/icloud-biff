@@ -18,7 +18,7 @@ use std::collections::HashMap;
 pub fn build(
     config: &Config,
     assets: Vec<&Asset>,
-    thumbnail_urls: HashMap<Checksum, URL>,
+    thumbnail_urls: HashMap<Checksum, Url>,
 ) -> String {
     format!(
         "{}",

@@ -38,7 +38,7 @@ pub struct Checksum(String);
 
 /// A URL. Insides are public for easy rendering into HTML.
 #[derive(Debug, Clone, Deserialize)]
-pub struct URL(pub String);
+pub struct Url(pub String);
 
 /// An album id
 #[derive(Debug, Serialize, Deserialize, Display)]

@@ -3,27 +3,27 @@
 
 # iCloud Biff
 
-Scan a public iCloud shared photo library, and send an email with the
-thumbnails of any photos/videos that are new since the last time the program
-was run.
+Periodically scan a public iCloud shared photo library, and send an email with
+the thumbnails of any photos/videos that are new since the last time the
+program was run.
 
 ## Usage
 
-Easiest is to use [NixOS](https://nixos.org) - just add `nix/modules.nix` to your `imports`, and
-then do something like:
+Easiest is to use the [NixOS](https://nixos.org) - just include the flake's
+overlay and nixosModule, and then configure something like:
 
 ```nix
-    services.icloud-biff = {
-        enable = true;
-        album-name = "My awesome photos";
-        album-id = "T0vXgdFERSurw2c";
-        recipient-email-addrs = [
-            "mum@example.com"
-            "friend@example.com"
-        ];
-        sender-email-addr = "phobot@example.com";
-        sender-email-name = "Helpful Photo Update Robot";
-    };
+services.icloud-biff = {
+    enable = true;
+    album-name = "My awesome photos";
+    album-id = "T0vXgdFERSurw2c";
+    recipient-email-addrs = [
+        "mum@example.com"
+        "friend@example.com"
+    ];
+    sender-email-addr = "phobot@example.com";
+    sender-email-name = "Helpful Photo Update Robot";
+};
 ```
 
 The only things to watch are the `album-id` (which is the string of characters
@@ -38,17 +38,17 @@ By default this runs the daemon every hour, but this is configurable with the
 
 ### Building
 
-If using [Nix](https://nixos.org), then `nix build`. If you also have
-[Cachix](https://cachix.org), then `cachix use simonchatts` gives you access
-to the binaries pre-built by GitHub (x86_64 linux/macOS).
+If using [Nix](https://nixos.org/learn.html), then `nix build`. If you also
+have [Cachix](https://cachix.org), then `cachix use simonchatts` gives you
+access to the binaries pre-built by GitHub (x86_64 linux/macOS).
 
 Otherwise `cargo build --release`.
 
 ### Deploying
 
-Create a configuration JSON file like the above, but
-without `enable = true;` and with the path to a read-write JSON file that can
-be used to store state. For example:
+Create a configuration JSON file like the above, but without `enable = true;`
+and with the path to a read-write JSON file that can be used to store state.
+For example:
 
 ```json
 {

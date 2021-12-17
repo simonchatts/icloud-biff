@@ -1,24 +1,30 @@
-#
-# Build icloud-biff binary.
-#
-# Pinned nixpkgs and gitignoreSource function managed by niv.
-#
-
-{ pkgs ? import (import ./nix/sources.nix).nixpkgs {} }:
-
-# pull in gitignoreSource function
+# Production build for icloud-biff
+{ stdenv, lib, rustPlatform, rustc, cargo, pkg-config, openssl, curl, libiconv, darwin }:
 let
-  gitignore = (import ./nix/sources.nix).gitignore;
-  gitignoreSource = (import gitignore {}).gitignoreSource;
+  # Just include: Cargo.toml, Cargo.lock, src/**
+  regex = ".*/Cargo\.(lock|toml)|.*/src($|/.*)";
+  rustFilterSource = builtins.filterSource (path: _: builtins.match regex path != null);
+  cargoToml = (builtins.fromTOML (builtins.readFile ./Cargo.toml));
 in
-with pkgs;
-
-rustPlatform.buildRustPackage rec {
-  pname = "icloud-biff";
-  nativeBuildInputs = [ pkg-config ];
-  buildInputs = [ openssl ] ++ stdenv.lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.Security ];
-  version = "1.0.0";
-  src = gitignoreSource ./.;
-  cargoSha256 = "0w2n1wpwclv4gl7ksb5laxcjxwf0xrgdfhpk18hpp3b136mff9vn";
-  verifyCargoDeps = true;
+rustPlatform.buildRustPackage {
+  # Package just the rust binary
+  pname = cargoToml.package.name;
+  version = cargoToml.package.version;
+  src = rustFilterSource ./.;
+  cargoLock = {
+    lockFile = ./Cargo.lock;
+  };
+  nativeBuildInputs = [
+    rustc
+    cargo
+    pkg-config
+  ];
+  buildInputs = [
+    openssl
+  ] ++ lib.optionals stdenv.isDarwin [
+    curl
+    libiconv
+    darwin.apple_sdk.frameworks.Security
+    darwin.apple_sdk.frameworks.SystemConfiguration
+  ];
 }

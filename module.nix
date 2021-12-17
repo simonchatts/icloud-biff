@@ -1,17 +1,9 @@
 # NixOS module for the `icloud-biff` service, that monitors an iCloud shared
 # photo library, and emails when there are new updates.
-
 { config, lib, pkgs, ... }:
-
 with lib;
 let
-
   cfg = config.services.icloud-biff;
-
-  # The usual thing to do here would be `{ import pkgs; }` not `{ }`,
-  # but since the binary is nearly static, prefer the niv-pinned nixpkgs.
-  icloud-biff = import ../. { };
-
 in
 {
   #
@@ -84,32 +76,32 @@ in
       };
       config-file = pkgs.writeText "icloud-biff-config.json" (builtins.toJSON config-file-contents);
     in
-      mkIf cfg.enable {
-        # Database directory
-        systemd.tmpfiles.rules = [
-          "d /var/lib/icloud-biff 0755 icloud-biff icloud-biff"
-        ];
+    mkIf cfg.enable {
+      # Database directory
+      systemd.tmpfiles.rules = [
+        "d /var/lib/icloud-biff 0755 icloud-biff icloud-biff"
+      ];
 
-        # Service
-        systemd.services.icloud-biff = {
-          description = "Monitor iCloud shared photo library";
-          after = [ "network-online.target" ];
-          startAt = cfg.interval;
-          serviceConfig = {
-            ExecStart = "${icloud-biff}/bin/icloud-biff --config ${config-file}";
-            User = "icloud-biff";
-            Group = "icloud-biff";
-          };
-        };
-
-        # User/group
-        users = {
-          users.icloud-biff = {
-            description = "User to monitor iCloud photo library";
-            group = "icloud-biff";
-            isSystemUser = true;
-          };
-          groups.icloud-biff= {};
+      # Service
+      systemd.services.icloud-biff = {
+        description = "Monitor iCloud shared photo library";
+        after = [ "network-online.target" ];
+        startAt = cfg.interval;
+        serviceConfig = {
+          ExecStart = "${pkgs.icloud-biff}/bin/icloud-biff --config ${config-file}";
+          User = "icloud-biff";
+          Group = "icloud-biff";
         };
       };
+
+      # User/group
+      users = {
+        users.icloud-biff = {
+          description = "User to monitor iCloud photo library";
+          group = "icloud-biff";
+          isSystemUser = true;
+        };
+        groups.icloud-biff = { };
+      };
+    };
 }

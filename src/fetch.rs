@@ -96,7 +96,7 @@ fn process(photo: RawAsset) -> Asset {
 pub fn thumbnail_urls(
     photo_guids: &[&Guid],
     config: &Config,
-) -> Result<HashMap<Checksum, URL>, AnyError> {
+) -> Result<HashMap<Checksum, Url>, AnyError> {
     // We use an async http client, but just block on it straight away...
     let result = smol::block_on(
         surf::post(config.album_id.asset_urls())
@@ -139,7 +139,7 @@ struct Location {
 impl Location {
     /// Render a Location as a standard URL. See `PROTOCOL.md` - technically
     /// there is more to this, but in practice, this seems all that's required.
-    fn as_url(&self) -> URL {
-        URL(format!("https://{}{}", self.url_location, self.url_path))
+    fn as_url(&self) -> Url {
+        Url(format!("https://{}{}", self.url_location, self.url_path))
     }
 }
