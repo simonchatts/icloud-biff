@@ -2,21 +2,15 @@
 {
   description = "Scan a public iCloud Shared Photo library, and send an email summary if new content is available.";
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, flake-lib }:
     let
-      # Admin
-      cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
-      name = cargoToml.package.name;
-      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-      forAllSystems = f: nixpkgs.lib.genAttrs systems (system:
-        let pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ self.overlay ];
-        }; in f pkgs);
+      flib = flake-lib.outputs;
+      name = (flib.readCargoToml ./.).name;
+      forAllSystems = flib.forAllSystemsWith [ self.overlay ];
     in
     {
       # Overlay and default build artefacts
-      overlay = final: prev: { "${name}" = final.callPackage ./. { }; };
+      overlay = final: prev: { "${name}" = final.callPackage ./. { inherit flib; }; };
       packages = forAllSystems (pkgs: { "${name}" = pkgs."${name}"; });
       defaultPackage = forAllSystems (pkgs: pkgs."${name}");
 
@@ -24,18 +18,37 @@
       nixosModule = import ./module.nix;
 
       # Development environment
-      devShell = forAllSystems (pkgs: import ./shell.nix { inherit pkgs; });
+      devShell = forAllSystems (pkgs: pkgs.mkShell {
+        # Host development environment
+        nativeBuildInputs = with pkgs; [
+          rustc
+          cargo
+          pkg-config
+          clippy
+          rust-analyzer
+          rustfmt
+          nixpkgs-fmt
+        ];
+
+        # Build inputs
+        buildInputs = with pkgs; [
+          openssl
+        ] ++ lib.optionals stdenv.isDarwin [
+          curl
+          libiconv
+          darwin.apple_sdk.frameworks.Security
+          darwin.apple_sdk.frameworks.SystemConfiguration
+        ];
+      });
 
       # Basic CI checks
       checks = forAllSystems (pkgs: {
-        "${name}" = pkgs."${name}";
-        format = pkgs.runCommand "check-format"
-          { buildInputs = [ pkgs.cargo pkgs.rustfmt pkgs.nixpkgs-fmt ]; }
-          ''
-            ${pkgs.cargo}/bin/cargo fmt --manifest-path ${./.}/Cargo.toml -- --check
-            ${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt --check ${./.}
-            touch $out # success
-          '';
+        format = flib.checkRustFormat ./. pkgs;
       });
     };
+
+  inputs = {
+    flake-lib.url = "git+ssh://git@github.com/simonchatts/flake-lib?ref=main";
+    flake-lib.inputs.nixpkgs.follows = "nixpkgs";
+  };
 }

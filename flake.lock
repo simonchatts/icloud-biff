@@ -1,5 +1,26 @@
 {
   "nodes": {
+    "flake-lib": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1640276702,
+        "narHash": "sha256-Ht5t7OutW7dplBv2jffkqlVHG2Xch8b7ap7OGLDBdfc=",
+        "ref": "main",
+        "rev": "6d86397bc9c37dc4a95db51120f97eb2b1cbac3b",
+        "revCount": 7,
+        "type": "git",
+        "url": "ssh://git@github.com/simonchatts/flake-lib"
+      },
+      "original": {
+        "ref": "main",
+        "type": "git",
+        "url": "ssh://git@github.com/simonchatts/flake-lib"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1638806821,
@@ -16,6 +37,7 @@
     },
     "root": {
       "inputs": {
+        "flake-lib": "flake-lib",
         "nixpkgs": "nixpkgs"
       }
     }

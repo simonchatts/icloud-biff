@@ -1,16 +1,13 @@
 # Production build for icloud-biff
-{ stdenv, lib, rustPlatform, rustc, cargo, pkg-config, openssl, curl, libiconv, darwin }:
+{ flib, stdenv, lib, rustPlatform, rustc, cargo, pkg-config, openssl, curl, libiconv, darwin }:
 let
-  # Just include: Cargo.toml, Cargo.lock, src/**
-  regex = ".*/Cargo\.(lock|toml)|.*/src($|/.*)";
-  rustFilterSource = builtins.filterSource (path: _: builtins.match regex path != null);
-  cargoToml = (builtins.fromTOML (builtins.readFile ./Cargo.toml));
+  cargoToml = flib.readCargoToml ./.;
 in
 rustPlatform.buildRustPackage {
   # Package just the rust binary
-  pname = cargoToml.package.name;
-  version = cargoToml.package.version;
-  src = rustFilterSource ./.;
+  pname = cargoToml.name;
+  version = cargoToml.version;
+  src = flib.rustFilterSource ./.;
   cargoLock = {
     lockFile = ./Cargo.lock;
   };
@@ -27,4 +24,12 @@ rustPlatform.buildRustPackage {
     darwin.apple_sdk.frameworks.Security
     darwin.apple_sdk.frameworks.SystemConfiguration
   ];
+
+  # Metadata
+  meta = {
+    description = "Scan a public iCloud Shared Photo library, and send an email summary if new content is available";
+    homepage = "https://github.com/simonchatts/hashmash";
+    license = lib.licenses.mit;
+    maintainers = [ lib.maintainers.simonchatts ];
+  };
 }

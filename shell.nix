@@ -1,30 +1,10 @@
-# icloud-biff development environment
-{ pkgs ? import <nixpkgs> { } }:
-pkgs.mkShell {
-
-  # Build-time dependencies
-  nativeBuildInputs = with pkgs; [
-
-    # Basic build tools
-    rustc
-    cargo
-    pkg-config
-    openssl
-
-    # Interactive development
-    rust-analyzer
-    rustfmt
-    clippy
-    nixpkgs-fmt
-  ];
-
-  # Build inputs (eg for target system if cross-compiling)
-  buildInputs = with pkgs; [
-    openssl
-  ] ++ lib.optionals stdenv.isDarwin [
-    curl
-    libiconv
-    darwin.apple_sdk.frameworks.Security
-    darwin.apple_sdk.frameworks.SystemConfiguration
-  ];
-}
+# Temporarily provide a shell.nix until ecosystem catchs up to flakes.
+let
+  flake-compat-src =
+    fetchTarball {
+      url = "https://github.com/edolstra/flake-compat/archive/12c64ca55c1014cdc1b16ed5a804aa8576601ff2.tar.gz";
+      sha256 = "sha256-hY8g6H2KFL8ownSiFeMOjwPC8P0ueXpCVEbxgda3pko=";
+    };
+  flake-compat = import flake-compat-src { src = ./.; };
+in
+flake-compat.shellNix
