@@ -5,7 +5,7 @@ authors = ["Simon Chatterjee <code@chatts.net>"]
 edition = "2018"
 
 [dependencies]
-clap = { version = "3.0.0-rc.7", features = ["derive"] }
+clap = { version = "3.0.0-rc.9", features = ["derive"] }
 derivative = "2"           # derive Default
 derive_more = "0.99"       # derive Display
 lettre = "0.9"             # send email
