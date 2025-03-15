@@ -22,10 +22,12 @@ pub struct Config {
     pub sendmail_path: String,
 }
 
-fn default_sendmail_path() -> String { "/usr/sbin/sendmail".to_string() }
+fn default_sendmail_path() -> String {
+    "/usr/sbin/sendmail".to_string()
+}
 
 //////////////////////////////////////////////////////////////////////////////
-///
+//
 // Basic newtypes
 
 /// A Guid identifying a particuar asset.
