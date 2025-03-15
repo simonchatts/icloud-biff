@@ -86,6 +86,7 @@ in
       systemd.services.icloud-biff = {
         description = "Monitor iCloud shared photo library";
         after = [ "network-online.target" ];
+        requires = [ "network-online.target" ];
         startAt = cfg.interval;
         serviceConfig = {
           ExecStart = "${pkgs.icloud-biff}/bin/icloud-biff --config ${config-file}";
