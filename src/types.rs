@@ -58,7 +58,7 @@ impl AlbumId {
     /// URL for a JSON document listing all photo/video assets in this album.
     pub fn all_assets(&self) -> String {
         format!(
-            "https://p37-sharedstreams.icloud.com/{}/sharedstreams/webstream",
+            "https://p107-sharedstreams.icloud.com/{}/sharedstreams/webstream",
             self
         )
     }
@@ -66,7 +66,7 @@ impl AlbumId {
     /// URL for a JSON document listing URLS for a set of specified assets.
     pub fn asset_urls(&self) -> String {
         format!(
-            "https://p37-sharedstreams.icloud.com/{}/sharedstreams/webasseturls",
+            "https://p107-sharedstreams.icloud.com/{}/sharedstreams/webasseturls",
             self
         )
     }
